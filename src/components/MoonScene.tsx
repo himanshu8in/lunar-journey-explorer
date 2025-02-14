@@ -18,65 +18,83 @@ const MoonScene = () => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    // Camera setup
+    // Camera setup with adjusted FOV for more realistic perspective
     const camera = new THREE.PerspectiveCamera(
-      75,
+      60, // Reduced FOV for more natural view
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
-    camera.position.z = 5;
+    camera.position.z = 7; // Moved camera back slightly
     cameraRef.current = camera;
 
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Enhanced renderer setup
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true, 
+      alpha: true,
+      logarithmicDepthBuffer: true // Better depth perception
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance optimization
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; // More realistic lighting
+    renderer.toneMappingExposure = 0.5;
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // Controls setup
+    // Improved controls setup
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.minDistance = 3;
-    controls.maxDistance = 10;
+    controls.minDistance = 5;
+    controls.maxDistance = 15;
+    controls.enablePan = false; // Disable panning for better UX
+    controls.autoRotate = true; // Auto-rotation
+    controls.autoRotateSpeed = 0.5; // Slow auto-rotation speed
     controlsRef.current = controls;
 
-    // Lights setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Increased ambient light intensity
+    // Enhanced lighting setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1.5); // Increased point light intensity
-    pointLight.position.set(5, 3, 5);
-    scene.add(pointLight);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 3);
+    sunLight.position.set(5, 3, 5);
+    scene.add(sunLight);
 
-    // Moon setup
-    const moonGeometry = new THREE.SphereGeometry(2, 32, 32);
+    // Add subtle rim light for better depth
+    const rimLight = new THREE.DirectionalLight(0x334455, 0.3);
+    rimLight.position.set(-5, -3, -5);
+    scene.add(rimLight);
+
+    // Moon setup with improved textures
+    const moonGeometry = new THREE.SphereGeometry(2, 64, 64); // Increased segments for smoother surface
     const textureLoader = new THREE.TextureLoader();
     
     const moonMaterial = new THREE.MeshStandardMaterial({
       map: textureLoader.load('/moon-map.jpg'),
       bumpMap: textureLoader.load('/moon-bump.jpg'),
-      bumpScale: 0.02,
-      color: 0xffffff, // Added white base color
-      metalness: 0.1,  // Reduced metalness for a more matte look
-      roughness: 0.8   // Increased roughness for a more natural appearance
+      normalMap: textureLoader.load('/moon-normal.jpg'),
+      bumpScale: 0.04,
+      roughnessMap: textureLoader.load('/moon-roughness.jpg'),
+      roughness: 0.85,
+      metalness: 0.05,
     });
 
     const moon = new THREE.Mesh(moonGeometry, moonMaterial);
     scene.add(moon);
     moonRef.current = moon;
 
-    // Stars setup
+    // Enhanced stars setup
     const starGeometry = new THREE.BufferGeometry();
     const starMaterial = new THREE.PointsMaterial({
       color: 0xffffff,
-      size: 0.02,
+      size: 0.025,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true,
     });
 
     const starVertices = [];
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 15000; i++) {
       const x = (Math.random() - 0.5) * 2000;
       const y = (Math.random() - 0.5) * 2000;
       const z = -Math.random() * 2000;
@@ -100,7 +118,7 @@ const MoonScene = () => {
       }
 
       if (moonRef.current) {
-        moonRef.current.rotation.y += 0.001;
+        moonRef.current.rotation.y += 0.0005; // Slower rotation
       }
 
       renderer.render(scene, camera);
