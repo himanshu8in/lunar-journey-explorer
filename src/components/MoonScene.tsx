@@ -10,7 +10,9 @@ const MoonScene = () => {
   const rendererRef = useRef<THREE.WebGLRenderer>();
   const moonRef = useRef<THREE.Mesh>();
   const controlsRef = useRef<OrbitControls>();
-
+  const textureURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/lroc_color_poles_1k.jpg"; 
+  const displacementURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/ldem_3_8bit.jpg"; 
+  const worldURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/hipp8_s.jpg"
   useEffect(() => {
     if (!mountRef.current) return;
 
@@ -71,16 +73,23 @@ const MoonScene = () => {
     // Moon setup with new textures
     const moonGeometry = new THREE.SphereGeometry(2, 64, 64);
     const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load( textureURL );
+    const displacementMap = textureLoader.load( displacementURL );
+    const worldTexture = textureLoader.load( worldURL );
     
-    const moonMaterial = new THREE.MeshStandardMaterial({
-      map: textureLoader.load('/moon-map.jpg'),
-      normalMap: textureLoader.load('/moon-normal.jpg'),
-      normalScale: new THREE.Vector2(0.8, 0.8), // Adjusted normal map intensity
-      roughness: 0.7,
-      metalness: 0.2,
-      color: 0xffffff, // Pure white base color
-    });
-
+    const moonMaterial = new THREE.MeshPhongMaterial ( 
+      { color: 0xffffff ,
+      map: texture ,
+         displacementMap: displacementMap,
+      displacementScale: 0.06,
+      bumpMap: displacementMap,
+      bumpScale: 0.04,
+       reflectivity:0, 
+       shininess :0
+      } 
+    
+    );
+     
     const moon = new THREE.Mesh(moonGeometry, moonMaterial);
     scene.add(moon);
     moonRef.current = moon;
