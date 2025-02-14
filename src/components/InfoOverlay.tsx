@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Info, X, Moon, Compass } from 'lucide-react';
+import { Info, X, Moon, Compass, Star } from 'lucide-react';
 
 const InfoOverlay = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -14,10 +14,10 @@ const InfoOverlay = () => {
       <div className="absolute top-4 left-4 p-6 bg-space-black/80 backdrop-blur-md rounded-lg border border-space-silver/10 pointer-events-auto animate-fade-in max-w-md">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Moon className="w-6 h-6 text-space-silver" />
+            <Moon className="w-6 h-6 text-space-silver animate-float" />
             <h1 className="text-space-white text-2xl font-light">Luna Explorer</h1>
           </div>
-          <Info className="w-5 h-5 text-space-silver/60" />
+          <Star className="w-5 h-5 text-space-silver/60" />
         </div>
         <p className="text-space-silver/80 text-sm mb-4">
           Experience an accurate 3D representation of Earth's only natural satellite.
@@ -30,7 +30,10 @@ const InfoOverlay = () => {
       </div>
 
       <div className="absolute bottom-4 right-4 p-6 bg-space-black/80 backdrop-blur-md rounded-lg border border-space-silver/10 pointer-events-auto animate-fade-in max-w-md">
-        <h2 className="text-space-white text-lg font-light mb-4">Lunar Facts</h2>
+        <h2 className="text-space-white text-lg font-light mb-4 flex items-center gap-2">
+          <Info className="w-4 h-4 text-space-silver/60" />
+          Lunar Facts
+        </h2>
         <ul className="text-space-silver/80 text-sm space-y-3">
           <li className="flex items-center gap-2">
             <span className="w-32 text-space-silver/60">Distance from Earth:</span>

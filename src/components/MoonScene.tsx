@@ -37,7 +37,7 @@ const MoonScene = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance optimization
     renderer.toneMapping = THREE.ACESFilmicToneMapping; // More realistic lighting
-    renderer.toneMappingExposure = 0.5;
+    renderer.toneMappingExposure = 1.2; // Increased exposure for brighter appearance
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -47,26 +47,29 @@ const MoonScene = () => {
     controls.dampingFactor = 0.05;
     controls.minDistance = 5;
     controls.maxDistance = 15;
-    controls.enablePan = false; // Disable panning for better UX
-    controls.autoRotate = true; // Auto-rotation
-    controls.autoRotateSpeed = 0.5; // Slow auto-rotation speed
+    controls.enablePan = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
     controlsRef.current = controls;
 
-    // Enhanced lighting setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+    // Enhanced lighting setup for whiter appearance
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // Increased ambient light
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 3);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 4); // Increased intensity
     sunLight.position.set(5, 3, 5);
     scene.add(sunLight);
 
-    // Add subtle rim light for better depth
-    const rimLight = new THREE.DirectionalLight(0x334455, 0.3);
-    rimLight.position.set(-5, -3, -5);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 2); // Added fill light
+    fillLight.position.set(-5, 0, -5);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 1); // Brightened rim light
+    rimLight.position.set(0, -5, 0);
     scene.add(rimLight);
 
-    // Moon setup with improved textures
-    const moonGeometry = new THREE.SphereGeometry(2, 64, 64); // Increased segments for smoother surface
+    // Moon setup with improved textures and whiter appearance
+    const moonGeometry = new THREE.SphereGeometry(2, 64, 64);
     const textureLoader = new THREE.TextureLoader();
     
     const moonMaterial = new THREE.MeshStandardMaterial({
@@ -75,8 +78,9 @@ const MoonScene = () => {
       normalMap: textureLoader.load('/moon-normal.jpg'),
       bumpScale: 0.04,
       roughnessMap: textureLoader.load('/moon-roughness.jpg'),
-      roughness: 0.85,
-      metalness: 0.05,
+      roughness: 0.7, // Reduced roughness
+      metalness: 0.2, // Increased metalness slightly
+      color: 0xffffff, // Pure white base color
     });
 
     const moon = new THREE.Mesh(moonGeometry, moonMaterial);
@@ -118,7 +122,7 @@ const MoonScene = () => {
       }
 
       if (moonRef.current) {
-        moonRef.current.rotation.y += 0.0005; // Slower rotation
+        moonRef.current.rotation.y += 0.0005;
       }
 
       renderer.render(scene, camera);
