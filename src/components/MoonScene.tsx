@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const MoonScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -44,10 +44,10 @@ const MoonScene = () => {
     controlsRef.current = controls;
 
     // Lights setup
-    const ambientLight = new THREE.AmbientLight(0x333333);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Increased ambient light intensity
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1);
+    const pointLight = new THREE.PointLight(0xffffff, 1.5); // Increased point light intensity
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
 
@@ -59,6 +59,9 @@ const MoonScene = () => {
       map: textureLoader.load('/moon-map.jpg'),
       bumpMap: textureLoader.load('/moon-bump.jpg'),
       bumpScale: 0.02,
+      color: 0xffffff, // Added white base color
+      metalness: 0.1,  // Reduced metalness for a more matte look
+      roughness: 0.8   // Increased roughness for a more natural appearance
     });
 
     const moon = new THREE.Mesh(moonGeometry, moonMaterial);
