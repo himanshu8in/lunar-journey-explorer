@@ -1,18 +1,22 @@
-
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const MoonScene = () => {
+  const navigate = useNavigate();
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene>();
   const cameraRef = useRef<THREE.PerspectiveCamera>();
   const rendererRef = useRef<THREE.WebGLRenderer>();
   const moonRef = useRef<THREE.Mesh>();
   const controlsRef = useRef<OrbitControls>();
-  const textureURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/lroc_color_poles_1k.jpg"; 
-  const displacementURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/ldem_3_8bit.jpg"; 
-  const worldURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/hipp8_s.jpg"
+  const textureURL =
+    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/lroc_color_poles_1k.jpg";
+  const displacementURL =
+    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/ldem_3_8bit.jpg";
+  const worldURL =
+    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/hipp8_s.jpg";
   useEffect(() => {
     if (!mountRef.current) return;
 
@@ -31,10 +35,10 @@ const MoonScene = () => {
     cameraRef.current = camera;
 
     // Enhanced renderer setup
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: true, 
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
       alpha: true,
-      logarithmicDepthBuffer: true // Better depth perception
+      logarithmicDepthBuffer: true, // Better depth perception
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance optimization
@@ -73,23 +77,21 @@ const MoonScene = () => {
     // Moon setup with new textures
     const moonGeometry = new THREE.SphereGeometry(2, 64, 64);
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load( textureURL );
-    const displacementMap = textureLoader.load( displacementURL );
-    const worldTexture = textureLoader.load( worldURL );
-    
-    const moonMaterial = new THREE.MeshPhongMaterial ( 
-      { color: 0xffffff ,
-      map: texture ,
-         displacementMap: displacementMap,
+    const texture = textureLoader.load(textureURL);
+    const displacementMap = textureLoader.load(displacementURL);
+    const worldTexture = textureLoader.load(worldURL);
+
+    const moonMaterial = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      map: texture,
+      displacementMap: displacementMap,
       displacementScale: 0.06,
       bumpMap: displacementMap,
       bumpScale: 0.04,
-       reflectivity:0, 
-       shininess :0
-      } 
-    
-    );
-     
+      reflectivity: 0,
+      shininess: 0,
+    });
+
     const moon = new THREE.Mesh(moonGeometry, moonMaterial);
     scene.add(moon);
     moonRef.current = moon;
@@ -113,7 +115,7 @@ const MoonScene = () => {
     }
 
     starGeometry.setAttribute(
-      'position',
+      "position",
       new THREE.Float32BufferAttribute(starVertices, 3)
     );
 
@@ -146,17 +148,25 @@ const MoonScene = () => {
       rendererRef.current.setSize(window.innerWidth, window.innerHeight);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       mountRef.current?.removeChild(renderer.domElement);
       scene.clear();
     };
   }, []);
 
-  return <div ref={mountRef} className="w-full h-screen" />;
+  return (
+    <div
+      onDoubleClick={() => {
+        navigate("/info");
+      }}
+      ref={mountRef}
+      className="hover:cursor-pointer w-full h-screen"
+    />
+  );
 };
 
 export default MoonScene;
