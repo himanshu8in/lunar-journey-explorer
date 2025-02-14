@@ -68,18 +68,16 @@ const MoonScene = () => {
     rimLight.position.set(0, -5, 0);
     scene.add(rimLight);
 
-    // Moon setup with improved textures and whiter appearance
+    // Moon setup with new textures
     const moonGeometry = new THREE.SphereGeometry(2, 64, 64);
     const textureLoader = new THREE.TextureLoader();
     
     const moonMaterial = new THREE.MeshStandardMaterial({
       map: textureLoader.load('/moon-map.jpg'),
-      bumpMap: textureLoader.load('/moon-bump.jpg'),
       normalMap: textureLoader.load('/moon-normal.jpg'),
-      bumpScale: 0.04,
-      roughnessMap: textureLoader.load('/moon-roughness.jpg'),
-      roughness: 0.7, // Reduced roughness
-      metalness: 0.2, // Increased metalness slightly
+      normalScale: new THREE.Vector2(0.8, 0.8), // Adjusted normal map intensity
+      roughness: 0.7,
+      metalness: 0.2,
       color: 0xffffff, // Pure white base color
     });
 
